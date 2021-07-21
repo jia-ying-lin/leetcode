@@ -42,4 +42,47 @@ class Solution:
 # Ref:
 # https://medium.com/hoskiss-stand/manacher-299cf75db97e 
 # http://manacher-viz.s3-website-us-east-1.amazonaws.com/#/
-
+# https://www.youtube.com/watch?v=YVZttWzvyw8
+class Solution:
+    def longestPalindrome(self, s: str) -> str:  
+        if len(s) == 1:
+            return s
+        
+        l = ['_']*(len(s)*2+1)
+        lps = [0]*(len(s)*2+1)
+        for i in range(len(s)):
+            l[i+(i+1)] = s[i]
+        
+        max_len = 1
+        max_c = 1
+        L = 0
+        R = 0
+        c = 0
+        r = 1
+        for i in range(1, len(l)):
+            if i >= R:
+                c = i
+                r = 1
+                while i-r >= 0 and i+r < len(l) and l[i-r] == l[i+r]:
+                    L = i-r
+                    R = i+r
+                    if r > max_len:
+                        max_len = r
+                        max_c = i
+                    lps[i] = r
+                    r += 1
+            else:
+                mirro_i = c*2-i
+                if mirro_i-lps[mirro_i] > L:
+                    lps[i] = lps[mirro_i]
+                else:
+                    r = min(R - i, lps[mirro_i])
+                    while i-r >= 0 and i+r < len(l) and l[i-r] == l[i+r]:
+                        L = i-r
+                        R = i+r
+                        if r > max_len:
+                            max_len = r
+                            max_c = i
+                        lps[i] = r
+                        r += 1
+        return ''.join(l[max_c-max_len:max_c+max_len+1]).replace("_", "")
